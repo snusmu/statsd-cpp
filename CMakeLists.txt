@@ -83,4 +83,4 @@ configure_file(
 
 # Install pkg-config file
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/statsd-cpp.pc
-    DESTINATION lib/pkgconfig)
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig)
