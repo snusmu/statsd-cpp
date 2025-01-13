@@ -14,7 +14,6 @@
 #include <cstdlib>
 #include <sstream>
 #include <iomanip>
-#include <string>
 
 #include <random>
 #include <iostream>
@@ -31,6 +30,9 @@
 #include <unistd.h>
 #include <netdb.h>
 #endif
+
+# define statsd_error(message) \
+	std::cerr << "StatsD: " << message << std::endl;
 
 statsd::statsd_t statsd::info;
 std::string statsd::prefix;
@@ -121,42 +123,42 @@ int statsd::open(const std::string& host, int16_t port, int mode)
     return 4;
 }
 
-void statsd::timing(const std::string& key, const int64_t value, const float sample_rate)
+void statsd::timing(std::string_view key, const int64_t value, const float sample_rate)
 {
     send(key, value, sample_rate, "ms");
 }
 
-void statsd::increment(const std::string& key, const float sample_rate)
+void statsd::increment(std::string_view key, const float sample_rate)
 {
     count(key, 1, sample_rate);
 }
 
-void statsd::decrement(const std::string& key, const float sample_rate)
+void statsd::decrement(std::string_view key, const float sample_rate)
 {
     count(key, -1, sample_rate);
 }
 
-void statsd::count(const std::string& key, const int64_t value, const float sample_rate)
+void statsd::count(std::string_view key, const int64_t value, const float sample_rate)
 {
     send(key, value, sample_rate, "c");
 }
 
-void statsd::gaugeIncBy(const std::string& key, const int64_t value, const float sample_rate)
+void statsd::gaugeIncBy(std::string_view key, const int64_t value, const float sample_rate)
 {
     send(key, value, sample_rate, "g", "+");
 }
 
-void statsd::gaugeDecBy(const std::string& key, const int64_t value, const float sample_rate)
+void statsd::gaugeDecBy(std::string_view key, const int64_t value, const float sample_rate)
 {
     send(key, value, sample_rate, "g", "-");
 }
 
-void statsd::gauge(const std::string& key, const int64_t value, const float sample_rate)
+void statsd::gauge(std::string_view key, const int64_t value, const float sample_rate)
 {
     send(key, value, sample_rate, "g");
 }
 
-void statsd::set(const std::string& key, const int64_t value, const float sample_rate)
+void statsd::set(std::string_view key, const int64_t value, const float sample_rate)
 {
     send(key, value, sample_rate, "s");
 }
@@ -174,7 +176,7 @@ void statsd::close()
     }
 }
 
-void statsd::setPrefix(const std::string& _prefix) {
+void statsd::setPrefix(std::string_view _prefix) {
     prefix = _prefix;
 }
 
@@ -193,11 +195,11 @@ void statsd::setGlobalTags(std::vector<std::string> global_tags){
 const std::vector<std::string> empty_tags;
 
 void statsd::send(
-    const std::string& key,
+    std::string_view key,
     const int64_t value,
     const float sample_rate,
-    const std::string& unit,
-    const std::string& sign
+    std::string_view unit,
+    std::string_view sign
 )
 {
     if (info.sock == -1)
@@ -252,7 +254,7 @@ bool statsd::should_send(const float sample_rate)
     }
 }
 
-std::string statsd::normalize(const std::string& key)
+std::string statsd::normalize(std::string_view key)
 {
     std::string retval;
 
@@ -272,12 +274,12 @@ std::string statsd::normalize(const std::string& key)
 }
 
 std::string statsd::prepare(
-    const std::string& key,
+    std::string_view key,
     const int64_t value,
     const std::vector<std::string> tags,
     const float sample_rate,
-    const std::string& unit,
-    const std::string& sign
+    std::string_view unit,
+    std::string_view sign
 )
 {
     bool tagging = false;

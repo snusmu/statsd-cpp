@@ -6,7 +6,7 @@
 # For the full copyright and license information, please view the LICENSE
 # file that was distributed with this source code.
 ##
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 3.12)
 
 project(StatsD CXX)
 
@@ -28,7 +28,7 @@ set(CMAKE_MEMORYCHECK_COMMAND_OPTIONS "--error-exitcode=1 -v --track-origins=yes
 find_file(HAVE_VALGRIND "valgrind")
 
 add_definitions(
-    -std=c++11
+    -std=c++17
     -Wall
     -pedantic
 )
