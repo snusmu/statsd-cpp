@@ -11,6 +11,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <cstdint>
 
 #ifdef _WIN32
 #include <winsock2.h>
